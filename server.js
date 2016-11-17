@@ -101,7 +101,8 @@ app.get('/ok', (req, res) => {
     console.log(result);
     console.log(err);
     console.log("-------------------");
-    res.send(200);
+    var html = "<html><body><script type='text/javascript'>android.finishOk();</script></body></html>";
+    res.send(html);
   });
 });
 
