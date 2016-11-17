@@ -68,7 +68,7 @@ app.set('port', (process.env.PORT || 5000));
 
 var requestKey = '';
 /* ENDPOINTS */
-app.get('/pago/:amount', (req, res) => {
+app.post('/pago/:amount', (req, res) => {
   parameters.AMOUNT = req.params.amount;
   sdk.sendAutorizeRequest(options, parameters, fraudControl, function(result, err){
     console.log("------------- sendAutorizeRequest ---------------");
