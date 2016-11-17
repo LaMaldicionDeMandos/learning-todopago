@@ -26,6 +26,7 @@
     "morgan": "^1.7.0",
     "nodejsconfig": "^0.2.2",
     "q": "^1.4.1",
-    "request": "^2.73.0"
+    "request": "^2.73.0",
+    "todo-pago": "^1.0.3"
   }
 }
