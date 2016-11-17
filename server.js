@@ -11,8 +11,8 @@ var parameters = {
   'Security':'c4a9eb9f1b6d421297c7c6cf9bb06e50',
   'EncodingMethod':'XML',
   'Merchant':16002,
-  'URL_OK':'http://localhost:5000/ok/',
-  'URL_ERROR':'http://localhost:5000/fail/',
+  'URL_OK':'http://192.168.0.35:5000/ok/',
+  'URL_ERROR':'http://192.168.0.35:5000/fail/',
   'MERCHANT': "16002",
   'OPERATIONID':"1",
   'CURRENCYCODE': "032",
@@ -22,30 +22,30 @@ var parameters = {
 };
 
 var fraudControl = {
-  'CSBTCITY': 'Villa General Belgrano',
+  'CSBTCITY': 'Quilmes Oeste',
   'CSBTCOUNTRY': 'AR',
-  'CSBTCUSTOMERID': '453458',
+  'CSBTCUSTOMERID': '00001',
   'CSBTEMAIL': 'pasutmarcelo@hotmail.com',
   'CSBTFIRSTNAME': 'Marcelo',
-  'CSBTIPADDRESS': '127.0.0.1',
+  'CSBTIPADDRESS': '192.168.0.35',
   'CSBTLASTNAME': 'Pasut',
   'CSBTPHONENUMBER': '541164080807',
   'CSBTPOSTALCODE': ' 1878',
   'CSBTSTATE': 'B',
-  'CSBTSTREET1': 'Cerrito 740',
+  'CSBTSTREET1': 'Lavalleja 1745',
   'CSPTCURRENCY': 'ARS',
   'CSPTGRANDTOTALAMOUNT': '54.00',
-  'CSSTCITY': 'Villa General Belgrano',
+  'CSSTCITY': 'Quilmes',
   'CSSTCOUNTRY': 'AR',
-  'CSSTEMAIL': 'anbenito@yahoo.com.ar',
-  'CSSTFIRSTNAME': 'Aida',
-  'CSSTLASTNAME': 'Benito',
+  'CSSTEMAIL': 'pasutmarcelo@gmail.com',
+  'CSSTFIRSTNAME': 'Marcelo',
+  'CSSTLASTNAME': 'Pasut',
   'CSSTPHONENUMBER': '541160913988',
   'CSSTPOSTALCODE': ' 1878',
   'CSSTSTATE': 'B',
-  'CSSTSTREET1': 'Cerrito 740',
+  'CSSTSTREET1': 'Lavalleja 1745',
   'CSMDD1': '22',
-  'CSMDD2': 'bla',
+  'CSMDD2': 'Wolla inc',
   'CSMDD3': 'services',
   'CSITPRODUCTCODE': 'electronic_good#chocho',
   'CSITPRODUCTDESCRIPTION': 'NOTEBOOK L845 SP4304LA DF TOSHIBA#chocho',
@@ -101,12 +101,12 @@ app.get('/ok', (req, res) => {
     console.log(result);
     console.log(err);
     console.log("-------------------");
-    res.send(result);
+    res.send(200);
   });
 });
 
 app.get('/fail', (req, res) => {
-  res.send('fail');
+  res.status(400).send('fail');
 });
 
 app.listen(app.get('port'), function() {
