@@ -80,7 +80,7 @@ app.post('/pago/:amount', (req, res) => {
     }
     console.log("------------------------------------------------");
     requestKey = result.RequestKey;
-    res.status(201).send(result.URL_Request);
+    res.status(201).send({url: result.URL_Request});
   });
 });
 
