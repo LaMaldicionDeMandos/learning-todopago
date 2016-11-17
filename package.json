@@ -1,0 +1,31 @@
+{
+  "name": "todopago-test",
+  "version": "0.0.1",
+  "description": "Prueba de integracion de todo pago",
+  "private": true,
+  "main": "server.js",
+  "engines": {
+    "node": "0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LaMaldicionDeMandos/learning-todopago.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "todopago"
+  ],
+  "dependencies": {
+    "async": "^2.0.1",
+    "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
+    "errorhandler": "^1.4.3",
+    "express": "^4.14.0",
+    "method-override": "^2.3.6",
+    "morgan": "^1.7.0",
+    "nodejsconfig": "^0.2.2",
+    "q": "^1.4.1",
+    "request": "^2.73.0"
+  }
+}
