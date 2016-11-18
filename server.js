@@ -81,7 +81,7 @@ app.post('/pago/:amount', (req, res) => {
     console.log("------------------------------------------------");
     requestKey = result.RequestKey;
     if (result.StatusCode == -1) {
-      res.status(201).send({url: result.URL_Request});
+      res.status(202).send({url: result.URL_Request});
     } else {
       res.status(400).send();
     }
