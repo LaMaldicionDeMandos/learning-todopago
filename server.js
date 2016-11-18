@@ -1,5 +1,8 @@
 config = require('./services/config');
 var sdk = require('./node_modules/todo-pago');
+var request = require('request');
+var numeral = require('numeral');
+var Address6 = require('ip-address').Address6;
 
 /* Routers */
 var bodyParser = require('body-parser');
@@ -21,6 +24,9 @@ var parameters = {
   'MAXINSTALLMENTS':"6"
 };
 
+/**
+ * CSBT Usuario al que se le emite la factura
+ */
 var fraudControl = {
   'CSBTCITY': 'Quilmes Oeste',
   'CSBTCOUNTRY': 'AR',
@@ -35,7 +41,7 @@ var fraudControl = {
   'CSBTSTREET1': 'Lavalleja 1745',
   'CSPTCURRENCY': 'ARS',
   'CSPTGRANDTOTALAMOUNT': '54.00',
-  'CSSTCITY': 'Quilmes',
+  'CSSTCITY': 'Quilmes Oeste',
   'CSSTCOUNTRY': 'AR',
   'CSSTEMAIL': 'pasutmarcelo@gmail.com',
   'CSSTFIRSTNAME': 'Marcelo',
@@ -47,7 +53,7 @@ var fraudControl = {
   'CSMDD1': '22',
   'CSMDD2': 'Wolla inc',
   'CSMDD3': 'services',
-  'CSITPRODUCTCODE': 'electronic_good#chocho',
+  'CSITPRODUCTCODE': 'default',
   'CSITPRODUCTDESCRIPTION': 'NOTEBOOK L845 SP4304LA DF TOSHIBA#chocho',
   'CSITPRODUCTNAME': 'NOTEBOOK L845 SP4304LA DF TOSHIBA#chocho',
   'CSITPRODUCTSKU': 'LEVJNSL36GN#chocho',
@@ -68,23 +74,51 @@ app.set('port', (process.env.PORT || 5000));
 
 var requestKey = '';
 /* ENDPOINTS */
-app.post('/pago/:amount', (req, res) => {
-  parameters.AMOUNT = req.params.amount;
-  sdk.sendAutorizeRequest(options, parameters, fraudControl, function(result, err){
-    console.log("------------- sendAutorizeRequest ---------------");
-    if(result){
-      console.log(result);
+app.post('/sales/:id/pay', (req, res) => {
+  var token = req.get("Authorization");
+  var id = req.params.id;
+  var quantity = req.body.quantity;
+  request({
+    method: 'get',
+    url: 'https://wolla.herokuapp.com/api/bids/' + id,
+    headers: {
+      "Authorization": token
     }
-    if(err){
-      console.error(err);
-    }
-    console.log("------------------------------------------------");
-    requestKey = result.RequestKey;
-    if (result.StatusCode == -1) {
-      res.status(202).send({url: result.URL_Request});
-    } else {
-      res.status(400).send();
-    }
+  }, function(error, response, body) {
+    var bid = JSON.parse(body);
+    var amount = bid.price*quantity;
+    parameters.AMOUNT = amount;
+    parameters.OPERATIONID = bid_id;
+    var ipv4 = new Address6(req.ip).to4();
+    fraudControl.CSPTGRANDTOTALAMOUNT = numeral(amount).format('0.00');
+    fraudControl.CSSTCITY = bid.user.locality;
+    fraudControl.CSSTEMAIL = bid.user.email;
+    fraudControl.CSSTFIRSTNAME = bid.user.first_name;
+    fraudControl.CSSTLASTNAME = bid.user.last_name;
+    fraudControl.CSBTIPADDRESS = ipv4.address;
+    fraudControl.CSITPRODUCTDESCRIPTION = bid.item.title;
+    fraudControl.CSITPRODUCTNAME = bid.item.title;
+    fraudControl.CSITPRODUCTSKU = bid.item._id;
+    fraudControl.CSITTOTALAMOUNT = fraudControl.CSPTGRANDTOTALAMOUNT;
+    fraudControl.CSITQUANTITY = quantity;
+    fraudControl.CSITUNITPRICE = numeral(bid.price).format('0.00');
+
+    sdk.sendAutorizeRequest(options, parameters, fraudControl, function(result, err){
+      console.log("------------- sendAutorizeRequest ---------------");
+      if(result){
+        console.log(result);
+      }
+      if(err){
+        console.error(err);
+      }
+      console.log("------------------------------------------------");
+      requestKey = result.RequestKey;
+      if (result.StatusCode == -1) {
+        res.status(202).send({url: result.URL_Request});
+      } else {
+        res.status(400).send();
+      }
+    });
   });
 });
 
@@ -107,7 +141,8 @@ app.get('/ok', (req, res) => {
 });
 
 app.get('/fail', (req, res) => {
-  res.status(400).send('fail');
+  var html = "<html><body><script type='text/javascript'>android.finishError();</script></body></html>";
+  res.send(html);
 });
 
 app.listen(app.get('port'), function() {
